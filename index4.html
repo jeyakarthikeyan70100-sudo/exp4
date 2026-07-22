@@ -1,0 +1,1124 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Kruskal's and Prim's Algorithms - MST</title>
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            color: #1e293b;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(90deg, #0f172a, #312e81);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #312e81, #4f46e5, #7c3aed);
+            color: white;
+            padding: 80px 20px;
+            border-radius: 0 0 40px 40px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        /* Cards */
+        .custom-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);
+            transition: 0.3s;
+            height: 100%;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.18);
+        }
+
+        .icon-box {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-weight: 800;
+            color: #312e81;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+
+        /* Algorithm Code */
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 15px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* Complexity Table */
+        .table thead {
+            background: #312e81;
+            color: white;
+        }
+
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        /* Comparison */
+        .comparison-box {
+            border-left: 5px solid #4f46e5;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        /* Interactive Section */
+        .interactive-section {
+            background: #0f172a;
+            color: white;
+            border-radius: 30px;
+            padding: 50px;
+        }
+
+        .result-box {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 120px;
+            color: #dbeafe;
+        }
+
+        .btn-custom {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-custom:hover {
+            background: #7c3aed;
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: white;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+
+        /* Timeline */
+        .step {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 30px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 35px;
+            height: 35px;
+            background: #4f46e5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .interactive-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-diagram-3-fill"></i>
+            MST Algorithms
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#kruskal">Kruskal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#prim">Prim</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#comparison">Comparison</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#demo">Demo</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- ================= HERO ================= -->
+<section class="hero text-center">
+    <div class="container">
+
+        <span class="badge bg-light text-dark mb-3 px-3 py-2">
+            Data Structures & Algorithms
+        </span>
+
+        <h1>Implementation of Kruskal's and Prim's Algorithms</h1>
+
+        <p class="mt-4">
+            An interactive and comprehensive guide to finding the
+            <strong>Minimum Spanning Tree (MST)</strong> of a weighted,
+            connected, undirected graph using Kruskal's and Prim's algorithms.
+        </p>
+
+        <div class="mt-4">
+            <a href="#kruskal" class="btn btn-light btn-lg me-2">
+                Explore Algorithms
+            </a>
+
+            <a href="#demo" class="btn btn-outline-light btn-lg">
+                Try Demo
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ================= ABOUT MST ================= -->
+<section id="about" class="container py-5">
+
+    <div class="text-center">
+        <h2 class="section-title">What is a Minimum Spanning Tree?</h2>
+
+        <p class="section-subtitle">
+            A Minimum Spanning Tree is a subset of edges that connects all
+            vertices of a weighted, connected and undirected graph with
+            minimum possible total edge weight and without forming cycles.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card custom-card p-4">
+                <div class="icon-box">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+
+                <h4>Connected Graph</h4>
+
+                <p>
+                    Every vertex in the graph must be reachable from
+                    every other vertex through a path.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card custom-card p-4">
+                <div class="icon-box">
+                    <i class="bi bi-signpost-split"></i>
+                </div>
+
+                <h4>No Cycles</h4>
+
+                <p>
+                    The selected edges must not create a cycle.
+                    An MST with V vertices always contains V - 1 edges.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card custom-card p-4">
+                <div class="icon-box">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+
+                <h4>Minimum Cost</h4>
+
+                <p>
+                    The total weight of all selected edges must be
+                    as small as possible.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ================= KRUSKAL ================= -->
+<section id="kruskal" class="container py-5">
+
+    <div class="text-center">
+        <h2 class="section-title">Kruskal's Algorithm</h2>
+
+        <p class="section-subtitle">
+            Kruskal's algorithm is a greedy algorithm that builds the MST
+            by selecting the smallest available edge while avoiding cycles.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="card custom-card p-4">
+
+                <h4>
+                    <i class="bi bi-sort-down text-primary"></i>
+                    How Kruskal Works
+                </h4>
+
+                <div class="mt-4">
+
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        Sort all graph edges in increasing order of weight.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        Select the smallest edge.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        Check whether adding the edge creates a cycle.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        If no cycle is created, add the edge to MST.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">5</span>
+                        Repeat until V - 1 edges are selected.
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="card custom-card p-4">
+
+                <h4>Advantages</h4>
+
+                <ul class="list-group list-group-flush mt-3">
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Easy to implement
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Works efficiently with sparse graphs
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Uses Union-Find / Disjoint Set
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Greedy approach
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PRIM ================= -->
+<section id="prim" class="container py-5">
+
+    <div class="text-center">
+        <h2 class="section-title">Prim's Algorithm</h2>
+
+        <p class="section-subtitle">
+            Prim's algorithm is a greedy algorithm that starts from one
+            vertex and repeatedly adds the minimum-weight edge connecting
+            the current MST to an unvisited vertex.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="card custom-card p-4">
+
+                <h4>
+                    <i class="bi bi-play-circle text-primary"></i>
+                    How Prim Works
+                </h4>
+
+                <div class="mt-4">
+
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        Select any starting vertex.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        Mark the starting vertex as visited.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        Find the minimum-weight edge connecting
+                        visited and unvisited vertices.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        Add the selected edge and new vertex to MST.
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">5</span>
+                        Repeat until all vertices are included.
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="card custom-card p-4">
+
+                <h4>Advantages</h4>
+
+                <ul class="list-group list-group-flush mt-3">
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Efficient for dense graphs
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Works well with priority queues
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Starts from any vertex
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Simple graph traversal approach
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PSEUDOCODE ================= -->
+<section class="container py-5">
+
+    <div class="text-center">
+        <h2 class="section-title">Algorithm Implementation</h2>
+        <p class="section-subtitle">
+            Basic Python implementation of both MST algorithms.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Kruskal Code -->
+        <div class="col-lg-6">
+
+            <div class="card custom-card p-4">
+
+                <h4 class="mb-3">
+                    <i class="bi bi-code-slash"></i>
+                    Kruskal's Algorithm - Python
+                </h4>
+
+                <div class="code-box">
+<pre>
+def kruskal(graph, vertices):
+
+    parent = {v: v for v in vertices}
+
+    def find(v):
+        if parent[v] != v:
+            parent[v] = find(parent[v])
+        return parent[v]
+
+    def union(a, b):
+        root_a = find(a)
+        root_b = find(b)
+
+        if root_a != root_b:
+            parent[root_b] = root_a
+            return True
+
+        return False
+
+    mst = []
+
+    graph.sort(key=lambda edge: edge[2])
+
+    for u, v, weight in graph:
+
+        if union(u, v):
+            mst.append((u, v, weight))
+
+        if len(mst) == len(vertices) - 1:
+            break
+
+    return mst
+</pre>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Prim Code -->
+        <div class="col-lg-6">
+
+            <div class="card custom-card p-4">
+
+                <h4 class="mb-3">
+                    <i class="bi bi-code-slash"></i>
+                    Prim's Algorithm - Python
+                </h4>
+
+                <div class="code-box">
+<pre>
+import heapq
+
+def prim(graph, start):
+
+    visited = set()
+    mst = []
+    pq = [(0, start, None)]
+
+    while pq:
+
+        weight, vertex, parent = heapq.heappop(pq)
+
+        if vertex in visited:
+            continue
+
+        visited.add(vertex)
+
+        if parent is not None:
+            mst.append((parent, vertex, weight))
+
+        for neighbor, edge_weight in graph[vertex]:
+
+            if neighbor not in visited:
+                heapq.heappush(
+                    pq,
+                    (edge_weight, neighbor, vertex)
+                )
+
+    return mst
+</pre>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= COMPLEXITY ================= -->
+<section id="comparison" class="container py-5">
+
+    <div class="text-center">
+        <h2 class="section-title">Kruskal vs Prim</h2>
+
+        <p class="section-subtitle">
+            Comparison of the two popular Minimum Spanning Tree algorithms.
+        </p>
+    </div>
+
+    <div class="table-responsive shadow rounded">
+
+        <table class="table table-bordered table-hover text-center mb-0">
+
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Kruskal's Algorithm</th>
+                    <th>Prim's Algorithm</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td><strong>Approach</strong></td>
+                    <td>Edge-based</td>
+                    <td>Vertex-based</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Strategy</strong></td>
+                    <td>Greedy</td>
+                    <td>Greedy</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Starting Point</strong></td>
+                    <td>No fixed starting vertex</td>
+                    <td>Requires a starting vertex</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Cycle Detection</strong></td>
+                    <td>Union-Find</td>
+                    <td>Visited Set</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Sparse Graphs</td>
+                    <td>Dense Graphs</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Time Complexity</strong></td>
+                    <td>O(E log E)</td>
+                    <td>O(E log V) using Priority Queue</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Memory</strong></td>
+                    <td>O(V + E)</td>
+                    <td>O(V + E)</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- ================= INTERACTIVE DEMO ================= -->
+<section id="demo" class="container py-5">
+
+    <div class="interactive-section">
+
+        <div class="text-center mb-5">
+
+            <h2>
+                <i class="bi bi-play-circle-fill"></i>
+                Interactive MST Demo
+            </h2>
+
+            <p class="text-light">
+                Run Kruskal's or Prim's algorithm on a sample weighted graph.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Select Algorithm
+                </label>
+
+                <select id="algorithm" class="form-select">
+
+                    <option value="kruskal">
+                        Kruskal's Algorithm
+                    </option>
+
+                    <option value="prim">
+                        Prim's Algorithm
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Starting Vertex
+                </label>
+
+                <select id="startVertex" class="form-select">
+
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="text-center mt-4">
+
+            <button class="btn btn-custom"
+                    onclick="runMST()">
+
+                <i class="bi bi-lightning-fill"></i>
+                Run Algorithm
+
+            </button>
+
+        </div>
+
+
+        <div class="result-box mt-4">
+
+            <h5>
+                <i class="bi bi-terminal"></i>
+                Result
+            </h5>
+
+            <div id="result">
+                Click "Run Algorithm" to calculate the Minimum Spanning Tree.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= APPLICATIONS ================= -->
+<section class="container py-5">
+
+    <div class="text-center">
+        <h2 class="section-title">Applications of MST</h2>
+
+        <p class="section-subtitle">
+            Minimum Spanning Tree algorithms are widely used in real-world
+            network optimization problems.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card custom-card p-4 text-center">
+                <i class="bi bi-router-fill display-5 text-primary"></i>
+                <h5 class="mt-3">Computer Networks</h5>
+                <p>Designing efficient network connections.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card custom-card p-4 text-center">
+                <i class="bi bi-signpost-2-fill display-5 text-primary"></i>
+                <h5 class="mt-3">Road Networks</h5>
+                <p>Connecting locations with minimum construction cost.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card custom-card p-4 text-center">
+                <i class="bi bi-lightbulb-fill display-5 text-primary"></i>
+                <h5 class="mt-3">Power Grids</h5>
+                <p>Optimizing electrical distribution networks.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card custom-card p-4 text-center">
+                <i class="bi bi-diagram-3-fill display-5 text-primary"></i>
+                <h5 class="mt-3">Network Design</h5>
+                <p>Reducing the total cost of connecting systems.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CONCLUSION ================= -->
+<section class="container py-5">
+
+    <div class="comparison-box">
+
+        <h3>
+            <i class="bi bi-check-circle-fill text-success"></i>
+            Conclusion
+        </h3>
+
+        <p class="mt-3 mb-0">
+            Kruskal's and Prim's algorithms are fundamental greedy algorithms
+            used to construct Minimum Spanning Trees. Kruskal's algorithm
+            processes edges in increasing order and uses the Union-Find data
+            structure to prevent cycles. Prim's algorithm grows the MST from
+            a selected starting vertex by repeatedly choosing the minimum
+            weight edge connecting the current tree to a new vertex.
+            Both algorithms produce an MST for a connected, weighted,
+            undirected graph and are important techniques in graph theory,
+            network design and optimization.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<footer>
+
+    <div class="container text-center">
+
+        <h5>
+            <i class="bi bi-diagram-3-fill"></i>
+            Minimum Spanning Tree Algorithms
+        </h5>
+
+        <p class="mb-0">
+            Implementation and Comparison of Kruskal's and Prim's Algorithms
+        </p>
+
+        <small>
+            Designed using HTML, CSS, JavaScript & Bootstrap 5
+        </small>
+
+    </div>
+
+</footer>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+
+    // Sample weighted graph
+    const edges = [
+        ["A", "B", 2],
+        ["A", "C", 3],
+        ["B", "C", 1],
+        ["B", "D", 4],
+        ["C", "D", 2],
+        ["C", "E", 5],
+        ["D", "E", 1]
+    ];
+
+
+    // Find operation for Kruskal
+    function find(parent, vertex) {
+
+        if (parent[vertex] !== vertex) {
+            parent[vertex] =
+                find(parent, parent[vertex]);
+        }
+
+        return parent[vertex];
+    }
+
+
+    // Union operation
+    function union(parent, a, b) {
+
+        let rootA = find(parent, a);
+        let rootB = find(parent, b);
+
+        if (rootA === rootB) {
+            return false;
+        }
+
+        parent[rootB] = rootA;
+
+        return true;
+    }
+
+
+    // Kruskal Algorithm
+    function kruskalAlgorithm() {
+
+        let vertices = ["A", "B", "C", "D", "E"];
+
+        let parent = {};
+
+        vertices.forEach(v => {
+            parent[v] = v;
+        });
+
+        let sortedEdges = [...edges].sort(
+            (a, b) => a[2] - b[2]
+        );
+
+        let mst = [];
+        let totalWeight = 0;
+
+        for (let edge of sortedEdges) {
+
+            let [u, v, weight] = edge;
+
+            if (union(parent, u, v)) {
+
+                mst.push(edge);
+
+                totalWeight += weight;
+            }
+
+            if (mst.length === vertices.length - 1) {
+                break;
+            }
+        }
+
+        return {
+            mst: mst,
+            totalWeight: totalWeight
+        };
+    }
+
+
+    // Prim Algorithm
+    function primAlgorithm(start) {
+
+        let vertices = ["A", "B", "C", "D", "E"];
+
+        let visited = new Set();
+
+        let mst = [];
+
+        let totalWeight = 0;
+
+        visited.add(start);
+
+
+        while (visited.size < vertices.length) {
+
+            let minimumEdge = null;
+
+            for (let edge of edges) {
+
+                let [u, v, weight] = edge;
+
+                let connectsTree =
+                    visited.has(u) &&
+                    !visited.has(v);
+
+                let reverseConnectsTree =
+                    visited.has(v) &&
+                    !visited.has(u);
+
+                if (connectsTree || reverseConnectsTree) {
+
+                    if (
+                        minimumEdge === null ||
+                        weight < minimumEdge[2]
+                    ) {
+                        minimumEdge = edge;
+                    }
+                }
+            }
+
+
+            if (minimumEdge === null) {
+                break;
+            }
+
+
+            let [u, v, weight] = minimumEdge;
+
+            mst.push(minimumEdge);
+
+            totalWeight += weight;
+
+            visited.add(u);
+            visited.add(v);
+        }
+
+
+        return {
+            mst: mst,
+            totalWeight: totalWeight
+        };
+    }
+
+
+    // Run selected algorithm
+    function runMST() {
+
+        let algorithm =
+            document.getElementById("algorithm").value;
+
+        let start =
+            document.getElementById("startVertex").value;
+
+        let result =
+            document.getElementById("result");
+
+        let output;
+
+
+        if (algorithm === "kruskal") {
+
+            output = kruskalAlgorithm();
+
+        } else {
+
+            output = primAlgorithm(start);
+
+        }
+
+
+        let html = "";
+
+        html += "<strong>Selected Algorithm:</strong> ";
+
+        html += algorithm === "kruskal"
+            ? "Kruskal's Algorithm"
+            : "Prim's Algorithm";
+
+        html += "<br><br>";
+
+        html += "<strong>MST Edges:</strong><br>";
+
+
+        output.mst.forEach(edge => {
+
+            html +=
+                edge[0] +
+                " — " +
+                edge[1] +
+                " : Weight " +
+                edge[2] +
+                "<br>";
+
+        });
+
+
+        html += "<br>";
+
+        html +=
+            "<strong>Total MST Weight:</strong> " +
+            output.totalWeight;
+
+
+        result.innerHTML = html;
+
+    }
+
+</script>
+
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>
+```
