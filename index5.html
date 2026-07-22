@@ -1,0 +1,1925 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dijkstra's Algorithm | Single Source Shortest Path</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        /* ===============================
+           GENERAL STYLING
+        =============================== */
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+        }
+
+        /* ===============================
+           NAVBAR
+        =============================== */
+
+        .navbar {
+            background: linear-gradient(90deg, #0f172a, #1e3a8a, #4338ca);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .nav-link:hover {
+            color: #c7d2fe !important;
+        }
+
+        /* ===============================
+           HERO SECTION
+        =============================== */
+
+        .hero {
+            min-height: 550px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+
+            background:
+                linear-gradient(
+                    rgba(15, 23, 42, 0.85),
+                    rgba(49, 46, 129, 0.9)
+                ),
+                url("https://images.unsplash.com/photo-1518770660439-4636190af475")
+                center/cover;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 850px;
+            margin: auto;
+            line-height: 1.8;
+        }
+
+        .hero-btn {
+            padding: 13px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin: 8px;
+        }
+
+        /* ===============================
+           SECTION
+        =============================== */
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-weight: 800;
+            color: #312e81;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto 45px;
+        }
+
+        /* ===============================
+           CARDS
+        =============================== */
+
+        .custom-card {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            padding: 30px;
+            height: 100%;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.15);
+        }
+
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+
+            background: linear-gradient(
+                135deg,
+                #4f46e5,
+                #7c3aed
+            );
+
+            color: white;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        /* ===============================
+           ALGORITHM STEPS
+        =============================== */
+
+        .step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            min-width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #4f46e5;
+            color: white;
+
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        /* ===============================
+           CODE BLOCK
+        =============================== */
+
+        .code-container {
+            background: #0f172a;
+            color: #e2e8f0;
+
+            border-radius: 18px;
+            padding: 25px;
+
+            overflow-x: auto;
+
+            box-shadow: 0 10px 30px
+                rgba(15, 23, 42, 0.2);
+        }
+
+        .code-container pre {
+            margin: 0;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* ===============================
+           COMPLEXITY CARDS
+        =============================== */
+
+        .complexity-card {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+
+            box-shadow: 0 10px 25px
+                rgba(15, 23, 42, 0.08);
+        }
+
+        .complexity-card h2 {
+            color: #4f46e5;
+            font-weight: 800;
+        }
+
+        /* ===============================
+           GRAPH VISUALIZATION
+        =============================== */
+
+        .graph-container {
+            background: #0f172a;
+            border-radius: 25px;
+            padding: 35px;
+            color: white;
+        }
+
+        .graph {
+            position: relative;
+            height: 450px;
+            background: #111827;
+            border-radius: 20px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #4f46e5;
+            color: white;
+
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 20px;
+
+            box-shadow: 0 0 20px
+                rgba(99, 102, 241, 0.5);
+
+            z-index: 5;
+        }
+
+        .node-a {
+            left: 10%;
+            top: 45%;
+        }
+
+        .node-b {
+            left: 35%;
+            top: 15%;
+        }
+
+        .node-c {
+            left: 35%;
+            top: 75%;
+        }
+
+        .node-d {
+            left: 65%;
+            top: 15%;
+        }
+
+        .node-e {
+            left: 65%;
+            top: 75%;
+        }
+
+        .node-f {
+            left: 88%;
+            top: 45%;
+        }
+
+        .edge {
+            position: absolute;
+            height: 3px;
+            background: #64748b;
+            transform-origin: left center;
+            z-index: 1;
+        }
+
+        .weight {
+            position: absolute;
+            color: white;
+            background: #334155;
+            padding: 3px 9px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 3;
+        }
+
+        /* Graph Edges */
+
+        .edge-ab {
+            width: 190px;
+            left: 15%;
+            top: 45%;
+            transform: rotate(-25deg);
+        }
+
+        .edge-ac {
+            width: 190px;
+            left: 15%;
+            top: 48%;
+            transform: rotate(25deg);
+        }
+
+        .edge-bc {
+            width: 260px;
+            left: 38%;
+            top: 25%;
+            transform: rotate(90deg);
+        }
+
+        .edge-bd {
+            width: 170px;
+            left: 40%;
+            top: 18%;
+            transform: rotate(0deg);
+        }
+
+        .edge-ce {
+            width: 170px;
+            left: 40%;
+            top: 78%;
+            transform: rotate(0deg);
+        }
+
+        .edge-de {
+            width: 260px;
+            left: 68%;
+            top: 25%;
+            transform: rotate(90deg);
+        }
+
+        .edge-df {
+            width: 170px;
+            left: 69%;
+            top: 18%;
+            transform: rotate(25deg);
+        }
+
+        .edge-ef {
+            width: 170px;
+            left: 69%;
+            top: 78%;
+            transform: rotate(-25deg);
+        }
+
+        /* ===============================
+           DEMO SECTION
+        =============================== */
+
+        .demo-section {
+            background: linear-gradient(
+                135deg,
+                #312e81,
+                #4f46e5
+            );
+
+            color: white;
+        }
+
+        .demo-card {
+            background: white;
+            color: #1e293b;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px
+                rgba(0, 0, 0, 0.2);
+        }
+
+        .result-box {
+            background: #0f172a;
+            color: #dbeafe;
+
+            padding: 25px;
+            border-radius: 15px;
+
+            min-height: 160px;
+
+            margin-top: 25px;
+        }
+
+        .distance-badge {
+            display: inline-block;
+            background: #4f46e5;
+            color: white;
+
+            padding: 8px 15px;
+            border-radius: 20px;
+
+            margin: 5px;
+        }
+
+        /* ===============================
+           FOOTER
+        =============================== */
+
+        footer {
+            background: #020617;
+            color: white;
+            padding: 40px 0;
+        }
+
+        /* ===============================
+           RESPONSIVE
+        =============================== */
+
+        @media (max-width: 768px) {
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero {
+                min-height: 500px;
+            }
+
+            .graph {
+                height: 350px;
+            }
+
+            .node {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =================================================
+     NAVBAR
+================================================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+
+    <div class="container">
+
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-signpost-split-fill"></i>
+            Dijkstra's Algorithm
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarMenu">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarMenu">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">
+                        About
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#working">
+                        Working
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#python">
+                        Python
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#complexity">
+                        Complexity
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#demo">
+                        Demo
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =================================================
+     HERO SECTION
+================================================= -->
+
+<section class="hero">
+
+    <div class="container">
+
+        <span class="badge bg-light text-dark px-3 py-2 mb-3">
+            Data Structures & Algorithms
+        </span>
+
+        <h1>
+            Single Source Shortest Path
+        </h1>
+
+        <h2 class="mt-3">
+            Dijkstra's Algorithm
+        </h2>
+
+        <p class="mt-4">
+
+            Dijkstra's Algorithm is a popular greedy algorithm used
+            to find the shortest path from a single source vertex
+            to all other vertices in a weighted graph with
+            non-negative edge weights.
+
+        </p>
+
+        <div class="mt-4">
+
+            <a
+                href="#demo"
+                class="btn btn-light hero-btn">
+
+                <i class="bi bi-play-fill"></i>
+                Run Interactive Demo
+
+            </a>
+
+            <a
+                href="#python"
+                class="btn btn-outline-light hero-btn">
+
+                <i class="bi bi-code-slash"></i>
+                View Python Code
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     ABOUT SECTION
+================================================= -->
+
+<section id="about">
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <h2 class="section-title">
+                What is Dijkstra's Algorithm?
+            </h2>
+
+            <p class="section-subtitle">
+
+                Dijkstra's Algorithm solves the Single Source
+                Shortest Path problem by calculating the minimum
+                distance from one selected source vertex to every
+                other vertex in a weighted graph.
+
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-4">
+
+                <div class="custom-card">
+
+                    <div class="icon-box">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+
+                    <h4>
+                        Single Source
+                    </h4>
+
+                    <p>
+
+                        The algorithm starts from one source
+                        vertex and calculates the shortest distance
+                        to all other vertices.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="custom-card">
+
+                    <div class="icon-box">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+
+                    <h4>
+                        Weighted Graph
+                    </h4>
+
+                    <p>
+
+                        It works on weighted graphs where every
+                        edge has a non-negative numerical cost
+                        or distance.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="custom-card">
+
+                    <div class="icon-box">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+
+                    <h4>
+                        Shortest Path
+                    </h4>
+
+                    <p>
+
+                        It determines the minimum-cost path
+                        from the source vertex to every reachable
+                        vertex.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     WORKING SECTION
+================================================= -->
+
+<section id="working" class="bg-white">
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <h2 class="section-title">
+                How Dijkstra's Algorithm Works
+            </h2>
+
+            <p class="section-subtitle">
+
+                The algorithm repeatedly selects the unvisited
+                vertex with the smallest known distance and
+                relaxes its neighboring edges.
+
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-lg-6">
+
+                <div class="custom-card">
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            1
+                        </span>
+
+                        <div>
+
+                            <h5>
+                                Initialize Distances
+                            </h5>
+
+                            <p>
+
+                                Set the source distance to 0
+                                and all other vertex distances
+                                to infinity.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            2
+                        </span>
+
+                        <div>
+
+                            <h5>
+                                Select Minimum Vertex
+                            </h5>
+
+                            <p>
+
+                                Select the unvisited vertex
+                                with the smallest tentative distance.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            3
+                        </span>
+
+                        <div>
+
+                            <h5>
+                                Relax Edges
+                            </h5>
+
+                            <p>
+
+                                Check all neighboring vertices.
+                                Update their distances if a shorter
+                                path is found.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            4
+                        </span>
+
+                        <div>
+
+                            <h5>
+                                Mark as Visited
+                            </h5>
+
+                            <p>
+
+                                Mark the selected vertex as visited
+                                so it will not be processed again.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <span class="step-number">
+                            5
+                        </span>
+
+                        <div>
+
+                            <h5>
+                                Repeat
+                            </h5>
+
+                            <p>
+
+                                Continue until all reachable
+                                vertices have been processed.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-6">
+
+                <div class="custom-card">
+
+                    <h4 class="mb-4">
+                        Key Concept: Relaxation
+                    </h4>
+
+                    <p>
+
+                        For an edge from vertex
+                        <strong>u</strong> to vertex
+                        <strong>v</strong> with weight
+                        <strong>w</strong>, Dijkstra's algorithm
+                        checks whether the following condition is true:
+
+                    </p>
+
+                    <div class="alert alert-primary text-center">
+
+                        <strong>
+                            distance[v] > distance[u] + weight(u,v)
+                        </strong>
+
+                    </div>
+
+                    <p>
+
+                        If the condition is true, the distance of
+                        vertex <strong>v</strong> is updated with
+                        the new shorter distance.
+
+                    </p>
+
+                    <div class="alert alert-success">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        This process is called
+                        <strong>edge relaxation</strong>.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     GRAPH VISUALIZATION
+================================================= -->
+
+<section>
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <h2 class="section-title">
+                Weighted Graph Visualization
+            </h2>
+
+            <p class="section-subtitle">
+
+                Example graph used to demonstrate shortest
+                path calculation from source vertex A.
+
+            </p>
+
+        </div>
+
+
+        <div class="graph-container">
+
+            <h4 class="text-center">
+                Sample Weighted Graph
+            </h4>
+
+            <div class="graph">
+
+                <!-- Edges -->
+
+                <div class="edge edge-ab"></div>
+                <div class="edge edge-ac"></div>
+                <div class="edge edge-bc"></div>
+                <div class="edge edge-bd"></div>
+                <div class="edge edge-ce"></div>
+                <div class="edge edge-de"></div>
+                <div class="edge edge-df"></div>
+                <div class="edge edge-ef"></div>
+
+
+                <!-- Weights -->
+
+                <span class="weight"
+                      style="left:22%;top:27%;">
+                    4
+                </span>
+
+                <span class="weight"
+                      style="left:22%;top:62%;">
+                    2
+                </span>
+
+                <span class="weight"
+                      style="left:39%;top:48%;">
+                    1
+                </span>
+
+                <span class="weight"
+                      style="left:52%;top:12%;">
+                    5
+                </span>
+
+                <span class="weight"
+                      style="left:52%;top:78%;">
+                    3
+                </span>
+
+                <span class="weight"
+                      style="left:67%;top:48%;">
+                    2
+                </span>
+
+                <span class="weight"
+                      style="left:78%;top:27%;">
+                    1
+                </span>
+
+                <span class="weight"
+                      style="left:78%;top:62%;">
+                    4
+                </span>
+
+
+                <!-- Nodes -->
+
+                <div class="node node-a">
+                    A
+                </div>
+
+                <div class="node node-b">
+                    B
+                </div>
+
+                <div class="node node-c">
+                    C
+                </div>
+
+                <div class="node node-d">
+                    D
+                </div>
+
+                <div class="node node-e">
+                    E
+                </div>
+
+                <div class="node node-f">
+                    F
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     PYTHON IMPLEMENTATION
+================================================= -->
+
+<section id="python" class="bg-white">
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <h2 class="section-title">
+                Python Implementation
+            </h2>
+
+            <p class="section-subtitle">
+
+                The following Python program implements
+                Dijkstra's Single Source Shortest Path Algorithm
+                using a priority queue.
+
+            </p>
+
+        </div>
+
+
+        <div class="code-container">
+
+<pre>
+import heapq
+
+def dijkstra(graph, source):
+
+    # Set initial distances to infinity
+    distances = {
+        vertex: float('inf')
+        for vertex in graph
+    }
+
+    # Distance from source to itself is 0
+    distances[source] = 0
+
+    # Priority queue
+    priority_queue = [(0, source)]
+
+    while priority_queue:
+
+        # Get vertex with minimum distance
+        current_distance, current_vertex = \
+            heapq.heappop(priority_queue)
+
+        # Ignore outdated entries
+        if current_distance > distances[current_vertex]:
+            continue
+
+        # Visit all neighboring vertices
+        for neighbor, weight in graph[current_vertex]:
+
+            distance = current_distance + weight
+
+            # Relaxation
+            if distance < distances[neighbor]:
+
+                distances[neighbor] = distance
+
+                heapq.heappush(
+                    priority_queue,
+                    (distance, neighbor)
+                )
+
+    return distances
+
+
+# Example Graph
+
+graph = {
+
+    'A': [('B', 4), ('C', 2)],
+
+    'B': [
+        ('A', 4),
+        ('C', 1),
+        ('D', 5)
+    ],
+
+    'C': [
+        ('A', 2),
+        ('B', 1),
+        ('D', 8),
+        ('E', 10)
+    ],
+
+    'D': [
+        ('B', 5),
+        ('C', 8),
+        ('E', 2),
+        ('F', 6)
+    ],
+
+    'E': [
+        ('C', 10),
+        ('D', 2),
+        ('F', 3)
+    ],
+
+    'F': [
+        ('D', 6),
+        ('E', 3)
+    ]
+}
+
+
+# Find shortest paths from A
+
+source = 'A'
+
+result = dijkstra(graph, source)
+
+
+# Display results
+
+print("Shortest distances from", source)
+
+for vertex, distance in result.items():
+
+    print(
+        source,
+        "->",
+        vertex,
+        "=",
+        distance
+    )
+</pre>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     COMPLEXITY SECTION
+================================================= -->
+
+<section id="complexity">
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <h2 class="section-title">
+                Time and Space Complexity
+            </h2>
+
+            <p class="section-subtitle">
+
+                The complexity depends on the data structure
+                used to implement the priority queue.
+
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-4">
+
+                <div class="complexity-card">
+
+                    <i class="bi bi-clock-history display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+                        Binary Heap
+                    </h5>
+
+                    <h2>
+                        O((V + E) log V)
+                    </h2>
+
+                    <p>
+                        Efficient implementation using
+                        a priority queue.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="complexity-card">
+
+                    <i class="bi bi-bar-chart-fill display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+                        Array
+                    </h5>
+
+                    <h2>
+                        O(V²)
+                    </h2>
+
+                    <p>
+                        Simple implementation using
+                        an array to find minimum distance.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="complexity-card">
+
+                    <i class="bi bi-memory display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+                        Space Complexity
+                    </h5>
+
+                    <h2>
+                        O(V + E)
+                    </h2>
+
+                    <p>
+                        Space required for graph,
+                        distances and priority queue.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     INTERACTIVE DEMO
+================================================= -->
+
+<section id="demo" class="demo-section">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2>
+                <i class="bi bi-play-circle-fill"></i>
+                Interactive Dijkstra Demo
+            </h2>
+
+            <p>
+                Select a source vertex and calculate
+                shortest distances to all other vertices.
+            </p>
+
+        </div>
+
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <div class="demo-card">
+
+                    <label class="form-label fw-bold">
+                        Select Source Vertex
+                    </label>
+
+                    <select
+                        id="sourceVertex"
+                        class="form-select form-select-lg">
+
+                        <option value="A">
+                            Vertex A
+                        </option>
+
+                        <option value="B">
+                            Vertex B
+                        </option>
+
+                        <option value="C">
+                            Vertex C
+                        </option>
+
+                        <option value="D">
+                            Vertex D
+                        </option>
+
+                        <option value="E">
+                            Vertex E
+                        </option>
+
+                        <option value="F">
+                            Vertex F
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        onclick="runDijkstra()"
+                        class="btn btn-primary btn-lg w-100 mt-4">
+
+                        <i class="bi bi-lightning-fill"></i>
+
+                        Calculate Shortest Paths
+
+                    </button>
+
+
+                    <div
+                        id="result"
+                        class="result-box">
+
+                        <h5>
+                            <i class="bi bi-terminal-fill"></i>
+                            Result
+                        </h5>
+
+                        <p>
+                            Select a source vertex and click
+                            "Calculate Shortest Paths".
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     APPLICATIONS
+================================================= -->
+
+<section>
+
+    <div class="container">
+
+        <div class="text-center">
+
+            <h2 class="section-title">
+                Applications of Dijkstra's Algorithm
+            </h2>
+
+            <p class="section-subtitle">
+
+                Dijkstra's Algorithm is widely used in
+                computer science and real-world systems.
+
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-3">
+
+                <div class="custom-card text-center">
+
+                    <i class="bi bi-map-fill display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+                        GPS Navigation
+                    </h5>
+
+                    <p>
+                        Finding shortest routes between locations.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="custom-card text-center">
+
+                    <i class="bi bi-router-fill display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+                        Computer Networks
+                    </h5>
+
+                    <p>
+                        Finding efficient routes for data packets.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="custom-card text-center">
+
+                    <i class="bi bi-controller display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+                        Games
+                    </h5>
+
+                    <p>
+                        Pathfinding for characters and game objects.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="custom-card text-center">
+
+                    <i class="bi bi-train-front-fill display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+                        Transportation
+                    </h5>
+
+                    <p>
+                        Optimizing routes in transportation systems.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     ADVANTAGES & LIMITATIONS
+================================================= -->
+
+<section class="bg-white">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+
+            <div class="col-md-6">
+
+                <div class="custom-card">
+
+                    <h3 class="text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Advantages
+                    </h3>
+
+                    <ul class="mt-4">
+
+                        <li class="mb-3">
+                            Finds shortest paths efficiently.
+                        </li>
+
+                        <li class="mb-3">
+                            Works well with non-negative edge weights.
+                        </li>
+
+                        <li class="mb-3">
+                            Can calculate shortest paths to all vertices.
+                        </li>
+
+                        <li class="mb-3">
+                            Useful in routing and navigation systems.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="custom-card">
+
+                    <h3 class="text-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Limitation
+                    </h3>
+
+                    <ul class="mt-4">
+
+                        <li class="mb-3">
+                            Does not work correctly with negative edge weights.
+                        </li>
+
+                        <li class="mb-3">
+                            Negative weight edges require algorithms
+                            such as Bellman-Ford.
+                        </li>
+
+                        <li class="mb-3">
+                            The algorithm assumes the graph has
+                            non-negative edge costs.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     CONCLUSION
+================================================= -->
+
+<section>
+
+    <div class="container">
+
+        <div class="custom-card text-center">
+
+            <i class="bi bi-award-fill display-4 text-primary"></i>
+
+            <h2 class="section-title mt-3">
+                Conclusion
+            </h2>
+
+            <p class="lead">
+
+                Dijkstra's Algorithm is one of the most important
+                graph algorithms used to solve the Single Source
+                Shortest Path problem. It uses a greedy approach
+                to repeatedly select the closest unvisited vertex
+                and relax its neighboring edges. With a priority
+                queue, the algorithm provides an efficient solution
+                for graphs containing non-negative edge weights.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     FOOTER
+================================================= -->
+
+<footer>
+
+    <div class="container text-center">
+
+        <h4>
+            <i class="bi bi-signpost-split-fill"></i>
+            Dijkstra's Algorithm
+        </h4>
+
+        <p class="mt-3 mb-2">
+
+            Single Source Shortest Path Algorithm
+
+        </p>
+
+        <small>
+
+            Designed using HTML, CSS, JavaScript & Bootstrap 5
+
+        </small>
+
+    </div>
+
+</footer>
+
+
+<!-- =================================================
+     JAVASCRIPT
+================================================= -->
+
+<script>
+
+    /*
+    ==========================================
+    GRAPH REPRESENTATION
+    ==========================================
+    */
+
+    const graph = {
+
+        A: [
+            ["B", 4],
+            ["C", 2]
+        ],
+
+        B: [
+            ["A", 4],
+            ["C", 1],
+            ["D", 5]
+        ],
+
+        C: [
+            ["A", 2],
+            ["B", 1],
+            ["D", 8],
+            ["E", 10]
+        ],
+
+        D: [
+            ["B", 5],
+            ["C", 8],
+            ["E", 2],
+            ["F", 6]
+        ],
+
+        E: [
+            ["C", 10],
+            ["D", 2],
+            ["F", 3]
+        ],
+
+        F: [
+            ["D", 6],
+            ["E", 3]
+        ]
+
+    };
+
+
+    /*
+    ==========================================
+    DIJKSTRA ALGORITHM
+    ==========================================
+    */
+
+    function dijkstra(graph, source) {
+
+        const distances = {};
+
+        const visited = new Set();
+
+        /*
+        Initialize all distances
+        */
+
+        for (let vertex in graph) {
+
+            distances[vertex] = Infinity;
+
+        }
+
+        /*
+        Distance from source to itself
+        */
+
+        distances[source] = 0;
+
+
+        /*
+        Main Algorithm Loop
+        */
+
+        while (
+            visited.size <
+            Object.keys(graph).length
+        ) {
+
+            let currentVertex = null;
+
+            let smallestDistance = Infinity;
+
+
+            /*
+            Find unvisited vertex
+            with minimum distance
+            */
+
+            for (let vertex in distances) {
+
+                if (
+                    !visited.has(vertex) &&
+                    distances[vertex] <
+                    smallestDistance
+                ) {
+
+                    smallestDistance =
+                        distances[vertex];
+
+                    currentVertex = vertex;
+
+                }
+
+            }
+
+
+            /*
+            Stop if no reachable vertex
+            */
+
+            if (currentVertex === null) {
+
+                break;
+
+            }
+
+
+            /*
+            Mark vertex as visited
+            */
+
+            visited.add(currentVertex);
+
+
+            /*
+            Relax neighboring edges
+            */
+
+            for (
+                let neighborData
+                of graph[currentVertex]
+            ) {
+
+                const neighbor =
+                    neighborData[0];
+
+                const weight =
+                    neighborData[1];
+
+
+                const newDistance =
+                    distances[currentVertex]
+                    + weight;
+
+
+                /*
+                Update shortest distance
+                */
+
+                if (
+                    newDistance <
+                    distances[neighbor]
+                ) {
+
+                    distances[neighbor] =
+                        newDistance;
+
+                }
+
+            }
+
+        }
+
+
+        return distances;
+
+    }
+
+
+    /*
+    ==========================================
+    RUN DIJKSTRA
+    ==========================================
+    */
+
+    function runDijkstra() {
+
+        const source =
+            document.getElementById(
+                "sourceVertex"
+            ).value;
+
+
+        const result =
+            dijkstra(
+                graph,
+                source
+            );
+
+
+        const resultBox =
+            document.getElementById(
+                "result"
+            );
+
+
+        let output = "";
+
+
+        output +=
+            "<h5>" +
+            "<i class='bi bi-check-circle-fill text-success'></i> " +
+            "Shortest Distances from " +
+            source +
+            "</h5>";
+
+
+        output +=
+            "<div class='mt-3'>";
+
+
+        /*
+        Display distances
+        */
+
+        for (
+            let vertex in result
+        ) {
+
+            let distance =
+                result[vertex];
+
+
+            if (
+                distance === Infinity
+            ) {
+
+                distance =
+                    "Unreachable";
+
+            }
+
+
+            output +=
+
+                "<span class='distance-badge'>" +
+
+                source +
+                " → " +
+                vertex +
+                " = " +
+                distance +
+
+                "</span>";
+
+        }
+
+
+        output += "</div>";
+
+
+        /*
+        Display result
+        */
+
+        resultBox.innerHTML =
+            output;
+
+    }
+
+</script>
+
+
+<!-- Bootstrap 5 JavaScript -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>
+```
